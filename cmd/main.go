@@ -17,28 +17,39 @@ const (
 var (
 	user    string
 	pass    string
-	client  = &http.Client{}
 	session string
 	expires time.Time
+	client  = &http.Client{}
 )
 
 func main() {
 	log.Println("Starting...")
+
 	log.Println("Loading config...")
-	config, err := os.ReadFile("config.ini")
+	err := loadConfig()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	log.Println("Punching...")
+	punch()
+
+	log.Println("Done")
+}
+
+func loadConfig() error {
+	config, err := os.ReadFile("config.ini")
+	if err != nil {
+		return err
 	}
 
 	// Parse user and pass from config file
 	_, err = fmt.Sscanf(string(config), "%s %s", &user, &pass)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	punch()
-
-	log.Println("Done")
+	return nil
 }
 
 func login() error {
